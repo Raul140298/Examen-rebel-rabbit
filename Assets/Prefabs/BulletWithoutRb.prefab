@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1023421712001779428}
   - component: {fileID: 5563746550699138309}
+  - component: {fileID: 719882032932503184}
   m_Layer: 0
   m_Name: BulletWithoutRb
   m_TagString: Untagged
@@ -84,3 +85,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &719882032932503184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8546311396091987204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b2f7929244a7164595854c68d5d54be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

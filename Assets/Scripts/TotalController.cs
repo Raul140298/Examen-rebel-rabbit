@@ -4,7 +4,18 @@ using UnityEngine;
 
 public class TotalController : MonoBehaviour
 {
-    private Rigidbody2D _rigidbody;
+	[SerializeField] private GameObject _bullet, _gun, _planet;
+	[SerializeField] private State _state;
+	[SerializeField] private float _jumpForce, _rollDuration;
+
+	[Header("Bullet")]
+	[SerializeField] private float _bulletLifeTime;
+	[SerializeField] private float _timeBetweenShot;
+	[SerializeField] private float _velocity;
+	[SerializeField] private float _angle;
+	[SerializeField] private float _gravity;
+
+	private Rigidbody2D _rigidbody;
 	private Animator _animator;
 	private SpriteRenderer _spriteRenderer;
 	private CircleCollider2D _rollCollider;
@@ -12,14 +23,8 @@ public class TotalController : MonoBehaviour
 	private float _move;
 	private bool _jump, _roll, _shooting, _loading;
 	private int _bulletCount;
+	private bool _onGround;
 	private List<GameObject> _bullets;
-	[SerializeField] private float _bulletLifeTime;
-	[SerializeField] private float _timeBetweenShot;
-	[SerializeField] private float _bulletVelocity;
-	[SerializeField] private GameObject _bullet, _gun, _planet;
-	[SerializeField] private State _state;
-	[SerializeField] private float _velocity, _jumpForce, _rollDuration;
-	[SerializeField] private bool _onGround;
 
 	void Awake()
     {
@@ -141,14 +146,18 @@ public class TotalController : MonoBehaviour
 		_bulletCount++;
 		if (_bulletCount == _bullets.Count) _bulletCount = 0;
 
-		//Set to Gun position
-		bulletAux.transform.position = _gun.transform.position + bulletDirection * 0.28f; //Offset of the gun
-
 		if (_shooting == true)
 		{
 			//Active Bullet and set velocity
 			bulletAux.gameObject.SetActive(true);
-			bulletAux.GetComponent<Rigidbody2D>().velocity = bulletDirection * _bulletVelocity;
+			bulletAux.GetComponent<BulletMovement>().InitValues(
+				new Vector3(
+					_gun.transform.position.x + (_spriteRenderer.flipX ? -0.33f : 0.33f), 
+					_gun.transform.position.y, 
+					_gun.transform.position.z),
+				_velocity * (_spriteRenderer.flipX ? -1 : 1), 
+				_angle, 
+				_gravity);
 
 			//Disable Bullet after a while
 			yield return new WaitForSeconds(_bulletLifeTime);
