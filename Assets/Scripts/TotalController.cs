@@ -135,6 +135,9 @@ public class TotalController : MonoBehaviour
 
 	IEnumerator Shot()
 	{
+		if (_bulletCount >= _bullets.Count) _bulletCount = 0;
+		if (_bulletCount <= -1) _bulletCount = _bullets.Count - 1;
+
 		Vector3 bulletDirection = Vector3.zero;
 		if (_spriteRenderer.flipX == true) bulletDirection = Vector3.left;
 		if (_spriteRenderer.flipX == false) bulletDirection = Vector3.right;
@@ -144,7 +147,6 @@ public class TotalController : MonoBehaviour
 
 		//Next bullet in the list
 		_bulletCount++;
-		if (_bulletCount == _bullets.Count) _bulletCount = 0;
 
 		if (_shooting == true)
 		{
@@ -166,7 +168,6 @@ public class TotalController : MonoBehaviour
 		else
 		{
 			_bulletCount--;
-			if (_bulletCount == -1) _bulletCount = _bullets.Count;
 		}
 		
 	}

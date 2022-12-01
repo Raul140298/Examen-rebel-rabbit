@@ -47,13 +47,14 @@ public class GunController : MonoBehaviour
 
 	IEnumerator Shot()
 	{
+		if (_bulletCount == _bullets.Count) _bulletCount = 0;
+
 		//Get the bullet fired
 		GameObject bulletAux = _bullets[_bulletCount];
 
 		//Next bullet in the list
 		_bulletCount++;
-		if (_bulletCount == _bullets.Count) _bulletCount = 0;
-
+		
 		//Set to Gun position
 		bulletAux.transform.position = this.transform.position + Vector3.right; //Offset of the gun
 

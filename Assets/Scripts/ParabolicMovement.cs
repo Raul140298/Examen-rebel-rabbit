@@ -18,7 +18,6 @@ public class ParabolicMovement : MonoBehaviour
 		//Initialize Position, velocity vector and gravity vector
 		_startParabolicMovement = false;
 		this.transform.position = initialPosition;
-		_gravityVector = Vector3.up * _gravity;
 		_angleRad = _angle * Mathf.PI / 180;
 
 		_velocityVector = new Vector3(
