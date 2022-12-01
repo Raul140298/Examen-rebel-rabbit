@@ -237,7 +237,7 @@ public class TotalController2 : MonoBehaviour
 			bulletAux.gameObject.SetActive(true);
 			bulletAux.GetComponent<BulletMovement>().InitValues(
 				gunPosition,
-				bulletDirection + _velocityVector,
+				bulletDirection,
 				_planet.transform,
 				_gravityValue);
 
