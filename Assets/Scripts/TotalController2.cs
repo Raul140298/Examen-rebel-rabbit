@@ -40,7 +40,7 @@ public class TotalController2 : MonoBehaviour
 
 	[Header("Input")]
 	private float _move;
-	[SerializeField] private bool _jump, _roll, _shot;
+	private bool _jump, _roll, _shot;
 	
 
 	void Awake()
@@ -198,11 +198,14 @@ public class TotalController2 : MonoBehaviour
 	{
 		if(_shot == true)
 		{
+			//If the button is pressed
 			if (_gunState == GunState.STATE_SHOOTING)
 			{
+				//Shot then load the next Bullet
 				StartCoroutine(Shot());
 				_gunState = GunState.STATE_LOADING;
 			}
+			//prevent pressing too often and shooting really fast
 			yield return new WaitForSeconds(_timeBetweenShot);
 			if (_gunState != GunState.STATE_HIDE)
 			{
@@ -222,10 +225,6 @@ public class TotalController2 : MonoBehaviour
 		if (_bulletCount >= _bullets.Count) _bulletCount = 0;
 		if (_bulletCount <= -1) _bulletCount = _bullets.Count - 1;
 
-		Vector3 bulletDirection;
-		if (_lookingRight == true) bulletDirection = Vector3.Cross(_normal, Vector3.forward) * _bulletVelocity;
-		else bulletDirection = Vector3.Cross(_normal, -1 * Vector3.forward) * _bulletVelocity;
-
 		//Get the bullet fired
 		GameObject bulletAux = _bullets[_bulletCount];
 
@@ -238,9 +237,11 @@ public class TotalController2 : MonoBehaviour
 
 			//Active Bullet and set velocity
 			bulletAux.gameObject.SetActive(true);
+
 			bulletAux.GetComponent<BulletMovement>().InitValues(
 				gunPosition,
-				bulletDirection,
+				_lookingRight,
+				_bulletVelocity,
 				_planet.transform,
 				_gravityValue);
 
@@ -250,6 +251,7 @@ public class TotalController2 : MonoBehaviour
 		}
 		else
 		{
+			//Return the previous bullet
 			_bulletCount--;
 		}
 	}
@@ -259,8 +261,8 @@ public class TotalController2 : MonoBehaviour
 		//Capture input
 		_move = Input.GetAxisRaw("Horizontal");
 		_jump = Input.GetKeyDown(KeyCode.Space);
-		_roll = Input.GetKeyDown(KeyCode.LeftControl);
-		_shot = Input.GetKey(KeyCode.LeftShift);
+		_roll = Input.GetKeyDown(KeyCode.LeftShift);
+		_shot = Input.GetKey(KeyCode.LeftControl);
 
 		//Get the normal between planet and player
 		_normal = ((Vector2)transform.position - (Vector2)_planet.transform.position).normalized;

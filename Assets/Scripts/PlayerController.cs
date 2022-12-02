@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
 		//Capture input
 		_move = Input.GetAxisRaw("Horizontal");
 		_jump = Input.GetKeyDown(KeyCode.Space);
-		_roll = Input.GetKeyDown(KeyCode.LeftControl);
+		_roll = Input.GetKeyDown(KeyCode.LeftShift);
 
 		manageMovement();
 

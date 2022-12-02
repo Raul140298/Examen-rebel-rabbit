@@ -138,10 +138,6 @@ public class TotalController : MonoBehaviour
 		if (_bulletCount >= _bullets.Count) _bulletCount = 0;
 		if (_bulletCount <= -1) _bulletCount = _bullets.Count - 1;
 
-		Vector3 bulletDirection = Vector3.zero;
-		if (_spriteRenderer.flipX == true) bulletDirection = Vector3.left;
-		if (_spriteRenderer.flipX == false) bulletDirection = Vector3.right;
-
 		//Get the bullet fired
 		GameObject bulletAux = _bullets[_bulletCount];
 
@@ -177,18 +173,18 @@ public class TotalController : MonoBehaviour
 		//Capture input
 		_move = Input.GetAxisRaw("Horizontal");
 		_jump = Input.GetKeyDown(KeyCode.Space);
-		_roll = Input.GetKeyDown(KeyCode.LeftControl);
+		_roll = Input.GetKeyDown(KeyCode.LeftShift);
 
 		//Can't shot during roll
 		if(_state != State.STATE_ROLL)
 		{
-			if (_shooting == false && Input.GetKeyDown(KeyCode.LeftShift))
+			if (_shooting == false && Input.GetKeyDown(KeyCode.LeftControl))
 			{
 				_gun.SetActive(true);
 				_shooting = true;
 				if(_loading == false) StartCoroutine(manageShot());
 			}
-			if (_shooting == true && Input.GetKeyUp(KeyCode.LeftShift))
+			if (_shooting == true && Input.GetKeyUp(KeyCode.LeftControl))
 			{
 				_gun.SetActive(false);
 				_shooting = false;
