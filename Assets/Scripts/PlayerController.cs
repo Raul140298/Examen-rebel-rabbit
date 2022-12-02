@@ -93,7 +93,8 @@ public class PlayerController : MonoBehaviour
 			_rigidbody.AddForce(Vector2.up * _jumpForce);
 		}
 
-		_rigidbody.velocity = new Vector2(_move * _velocity, _rigidbody.velocity.y);
+		//The roll shouldn't be able to propel it into the air
+		_rigidbody.velocity = new Vector2(_move * (_velocity + (_state == State.STATE_ROLL && _onGround == true ? 2f : 0f)), _rigidbody.velocity.y);
 	}
 
 	void Update()

@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+enum GunState
+{
+	STATE_HIDE,
+	STATE_SHOOTING,
+	STATE_LOADING,
+};
+
 public class TotalController2 : MonoBehaviour
 {
 	[Header("Player")]
@@ -23,31 +30,32 @@ public class TotalController2 : MonoBehaviour
 	private Vector3  _gravityVector;
 
 	[Header("Gun")]
+	[SerializeField] private GunState _gunState;
 	[SerializeField] private float _bulletLifeTime;
 	[SerializeField] private float _timeBetweenShot;
 	[SerializeField] private float _bulletVelocity;
-	[SerializeField] private float _gravity;
 	[SerializeField] private GameObject _bullet, _gunR, _gunL;
-	[SerializeField] private int _bulletCount;
+	private int _bulletCount;
 	private List<GameObject> _bullets;
 
-	//Input
+	[Header("Input")]
 	private float _move;
-	private bool _jump, _roll, _shooting, _loading;
+	[SerializeField] private bool _jump, _roll, _shot;
 	
 
 	void Awake()
 	{
+		//Initialize player controller variables
 		_animator = this.GetComponent<Animator>();
 		_spriteRenderer = this.GetComponent<SpriteRenderer>();
 		_rollCollider = this.GetComponent<CircleCollider2D>();
 		_neutralCollider = this.GetComponent<BoxCollider2D>();
 		_state = State.STATE_IDLE;
+		_gunState = GunState.STATE_HIDE;
 		_neutralCollider.enabled = true;
 		_rollCollider.enabled = false;
 		_onGround = true;
-		_shooting = false;
-		_loading = false;
+		_shot = false;
 		_gunL.SetActive(false);
 		_gunR.SetActive(false);
 		_lookingRight = true;
@@ -58,16 +66,7 @@ public class TotalController2 : MonoBehaviour
 		_bulletCount = 0;
 		_bullets = new List<GameObject>();
 
-		//Add some bullets to satisfy the life time and shot between bullets
-		//and round to the nearest integer
-		int amountBullets = (int)Mathf.Ceil(_bulletLifeTime / _timeBetweenShot);
-
-		for (int i = 0; i < amountBullets; i++)
-		{
-			GameObject bullet = Instantiate(_bullet);
-			bullet.SetActive(false);
-			_bullets.Add(bullet);
-		}
+		manageBulletPooling();
 	}
 
 	private void OnCollisionEnter2D(Collision2D collision)
@@ -87,6 +86,20 @@ public class TotalController2 : MonoBehaviour
 		}
 	}
 
+	private void manageBulletPooling()
+	{
+		//Add some bullets to satisfy the life time and shot between bullets
+		//and round to the nearest integer
+		int amountBullets = (int)Mathf.Ceil(_bulletLifeTime / _timeBetweenShot);
+
+		for (int i = 0; i < amountBullets; i++)
+		{
+			GameObject bullet = Instantiate(_bullet);
+			bullet.SetActive(false);
+			_bullets.Add(bullet);
+		}
+	}
+
 	private void manageMovement()
 	{
 		if (_move == 0)
@@ -97,13 +110,15 @@ public class TotalController2 : MonoBehaviour
 		{
 			_lookingRight = true;
 			_spriteRenderer.flipX = false;
-			_velocityVector = Vector3.Cross(_normal, Vector3.forward) * _velocity;
+			//The roll shouldn't be able to propel it into the air
+			_velocityVector = Vector3.Cross(_normal, Vector3.forward) * (_velocity + (_state == State.STATE_ROLL && _onGround == true ? 2f : 0f));
 		}
 		if (_move < 0)
 		{
 			_lookingRight = false;
 			_spriteRenderer.flipX = true;
-			_velocityVector = Vector3.Cross(_normal, -1 * Vector3.forward) * _velocity;
+			//The roll shouldn't be able to propel it into the air
+			_velocityVector = Vector3.Cross(_normal, -1 * Vector3.forward) * (_velocity + (_state == State.STATE_ROLL && _onGround == true ? 2f : 0f));
 		}
 
 		if (_onGround == true && _jump)
@@ -133,43 +148,21 @@ public class TotalController2 : MonoBehaviour
 
 	private void manageGun()
 	{
-		//Can't shot during roll
-		if (_state != State.STATE_ROLL)
+		if(_state != State.STATE_ROLL && _shot == true)
 		{
-			if (_shooting == false && Input.GetKeyDown(KeyCode.LeftShift))
+			if (_lookingRight == true)
 			{
-				if (_lookingRight == true)
-				{
-					_gunR.SetActive(true);
-				}
-				else
-				{
-					_gunL.SetActive(true);
-				}
-				_shooting = true;
-				if (_loading == false) StartCoroutine(ManageShot());
+				_gunL.SetActive(false);
+				_gunR.SetActive(true);
 			}
-			if (_shooting == true)
+			else
 			{
-				if (_lookingRight == true)
-				{
-					_gunL.SetActive(false);
-					_gunR.SetActive(true);
-				}
-				else
-				{
-					_gunR.SetActive(false);
-					_gunL.SetActive(true);
-				}
-				if (Input.GetKeyUp(KeyCode.LeftShift))
-				{
-					_gunR.SetActive(false);
-					_gunL.SetActive(false);
-					_shooting = false;
-				}
+				_gunR.SetActive(false);
+				_gunL.SetActive(true);
 			}
 		}
-		else
+		
+		if(_state == State.STATE_ROLL || (_shot == false && _gunState != GunState.STATE_HIDE))
 		{
 			_gunR.SetActive(false);
 			_gunL.SetActive(false);
@@ -203,19 +196,29 @@ public class TotalController2 : MonoBehaviour
 
 	IEnumerator ManageShot()
 	{
-		if (_loading == false && _shooting == true)
+		if(_shot == true)
 		{
-			if (_loading == false) StartCoroutine(Shot());
-			_loading = true;
+			if (_gunState == GunState.STATE_SHOOTING)
+			{
+				StartCoroutine(Shot());
+				_gunState = GunState.STATE_LOADING;
+			}
+			yield return new WaitForSeconds(_timeBetweenShot);
+			if (_gunState != GunState.STATE_HIDE)
+			{
+				_gunState = GunState.STATE_SHOOTING;
+				StartCoroutine(ManageShot());
+			}
 		}
-
-		yield return new WaitForSeconds(_timeBetweenShot);
-		_loading = false;
-		if (_shooting == true) StartCoroutine(ManageShot());
+		else
+		{
+			_gunState = GunState.STATE_HIDE;
+		}
 	}
 
 	IEnumerator Shot()
 	{
+		//Restart bulletPoolingCount
 		if (_bulletCount >= _bullets.Count) _bulletCount = 0;
 		if (_bulletCount <= -1) _bulletCount = _bullets.Count - 1;
 
@@ -229,7 +232,7 @@ public class TotalController2 : MonoBehaviour
 		//Next bullet in the list
 		_bulletCount++;
 
-		if (_shooting == true && _state != State.STATE_ROLL)
+		if (_gunState == GunState.STATE_SHOOTING && _state != State.STATE_ROLL)
 		{
 			Transform gunPosition = _lookingRight == true ? _gunR.transform.GetChild(0) : _gunL.transform.GetChild(0);
 
@@ -249,7 +252,6 @@ public class TotalController2 : MonoBehaviour
 		{
 			_bulletCount--;
 		}
-
 	}
 
 	void Update()
@@ -258,14 +260,15 @@ public class TotalController2 : MonoBehaviour
 		_move = Input.GetAxisRaw("Horizontal");
 		_jump = Input.GetKeyDown(KeyCode.Space);
 		_roll = Input.GetKeyDown(KeyCode.LeftControl);
+		_shot = Input.GetKey(KeyCode.LeftShift);
 
 		//Get the normal between planet and player
 		_normal = ((Vector2)transform.position - (Vector2)_planet.transform.position).normalized;
 
-		manageGun();
 		manageRotation();
 		manageGravity();
 		manageMovement();
+		manageGun();
 
 		//Add gravity
 		if(_onGround == false) _jumpVector += _gravityVector * Time.deltaTime;
@@ -273,6 +276,20 @@ public class TotalController2 : MonoBehaviour
 		//Add the distance traveled to the position
 		transform.position += (_velocityVector + _jumpVector) * Time.deltaTime;
 
+		
+		switch (_gunState)
+		{
+			case GunState.STATE_HIDE:
+				if(_shot == true)
+				{
+					_gunState = GunState.STATE_SHOOTING;
+					StartCoroutine(ManageShot());
+				}
+				break;
+
+			default:
+				break;
+		}
 
 		switch (_state)
 		{

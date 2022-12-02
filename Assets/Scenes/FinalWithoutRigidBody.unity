@@ -872,12 +872,12 @@ MonoBehaviour:
   _gravityValue: 10
   _bulletLifeTime: 0.6
   _timeBetweenShot: 0.2
-  _bulletVelocity: 4
+  _bulletVelocity: 12
   _gravity: 20
   _bullet: {fileID: 8546311396091987204, guid: 00d8fa236e74bea4abb5ccfbfc769249, type: 3}
   _gunR: {fileID: 211204848}
   _gunL: {fileID: 1255129494}
-  _bulletCount: 0
+  _bulletCount: 3
 --- !u!1 &762808464
 GameObject:
   m_ObjectHideFlags: 0
