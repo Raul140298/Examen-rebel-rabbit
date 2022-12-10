@@ -10,10 +10,10 @@ public class Freefall : MonoBehaviour
 
     void Awake()
     {
-        initValues();
+        InitValues();
 	}
 
-    private void initValues()
+    private void InitValues()
     {
         //Initialize Position and gravity vector
 		_startFreefall = false;
@@ -32,7 +32,7 @@ public class Freefall : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Return))
         {
-			initValues();
+			InitValues();
 		}
 
         if(_startFreefall == false)

@@ -10,10 +10,10 @@ public class ParabolicMovement : MonoBehaviour
 
 	void Awake()
 	{
-		initValues();
+		InitValues();
 	}
 
-	private void initValues()
+	private void InitValues()
 	{
 		//Initialize Position, velocity vector and gravity vector
 		_startParabolicMovement = false;
@@ -32,7 +32,7 @@ public class ParabolicMovement : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.Return))
 		{
-			initValues();
+			InitValues();
 		}
 
 		if (_startParabolicMovement == false)

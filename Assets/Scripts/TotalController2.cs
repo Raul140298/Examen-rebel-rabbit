@@ -66,7 +66,7 @@ public class TotalController2 : MonoBehaviour
 		_bulletCount = 0;
 		_bullets = new List<GameObject>();
 
-		manageBulletPooling();
+		ManageBulletPooling();
 	}
 
 	private void OnCollisionEnter2D(Collision2D collision)
@@ -86,7 +86,7 @@ public class TotalController2 : MonoBehaviour
 		}
 	}
 
-	private void manageBulletPooling()
+	private void ManageBulletPooling()
 	{
 		//Add some bullets to satisfy the life time and shot between bullets
 		//and round to the nearest integer
@@ -100,7 +100,7 @@ public class TotalController2 : MonoBehaviour
 		}
 	}
 
-	private void manageMovement()
+	private void ManageMovement()
 	{
 		if (_move == 0)
 		{
@@ -127,13 +127,13 @@ public class TotalController2 : MonoBehaviour
 		}
 	}
 
-	private void manageGravity()
+	private void ManageGravity()
 	{
 		//Calculate the distance traveled in each frame with the formula d = v * t
 		_gravityVector = ((Vector2)_planet.transform.position - (Vector2)transform.position).normalized * _gravityValue;
 	}
 
-	private void manageRotation()
+	private void ManageRotation()
 	{
 		//Get the angle between planet and player
 		Vector3 dir = (Vector2)_planet.transform.position - (Vector2)transform.position;
@@ -146,7 +146,7 @@ public class TotalController2 : MonoBehaviour
 		_gravityAngle + 90f);
 	}
 
-	private void manageGun()
+	private void ManageGun()
 	{
 		if(_state != State.STATE_ROLL && _shot == true)
 		{
@@ -267,10 +267,10 @@ public class TotalController2 : MonoBehaviour
 		//Get the normal between planet and player
 		_normal = ((Vector2)transform.position - (Vector2)_planet.transform.position).normalized;
 
-		manageRotation();
-		manageGravity();
-		manageMovement();
-		manageGun();
+		ManageRotation();
+		ManageGravity();
+		ManageMovement();
+		ManageGun();
 
 		//Add gravity
 		if(_onGround == false) _jumpVector += _gravityVector * Time.deltaTime;

@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
 		_rollCollider.enabled = false;
 	}
 
-	private void manageMovement()
+	private void ManageMovement()
 	{
 		if (_move > 0)
 		{
@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviour
 		_jump = Input.GetKeyDown(KeyCode.Space);
 		_roll = Input.GetKeyDown(KeyCode.LeftShift);
 
-		manageMovement();
+		ManageMovement();
 
 		switch (_state)
 		{

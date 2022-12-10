@@ -99,7 +99,7 @@ public class TotalController : MonoBehaviour
 		_rollCollider.enabled = false;
 	}
 
-	private void manageMovement()
+	private void ManageMovement()
 	{
 		if (_move > 0)
 		{
@@ -120,7 +120,7 @@ public class TotalController : MonoBehaviour
 		}
 	}
 
-	IEnumerator manageShot()
+	IEnumerator ManageShot()
 	{
 		if (_loading == false && _shooting == true)
 		{
@@ -130,7 +130,7 @@ public class TotalController : MonoBehaviour
 
 		yield return new WaitForSeconds(_timeBetweenShot);
 		_loading = false;
-		if (_shooting == true) StartCoroutine(manageShot());
+		if (_shooting == true) StartCoroutine(ManageShot());
 	}
 
 	IEnumerator Shot()
@@ -182,7 +182,7 @@ public class TotalController : MonoBehaviour
 			{
 				_gun.SetActive(true);
 				_shooting = true;
-				if(_loading == false) StartCoroutine(manageShot());
+				if(_loading == false) StartCoroutine(ManageShot());
 			}
 			if (_shooting == true && Input.GetKeyUp(KeyCode.LeftControl))
 			{
@@ -191,7 +191,7 @@ public class TotalController : MonoBehaviour
 			}
 		}
 
-		manageMovement();
+		ManageMovement();
 
 		switch (_state)
 		{
