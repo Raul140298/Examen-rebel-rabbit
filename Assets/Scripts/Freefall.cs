@@ -28,6 +28,15 @@ public class Freefall : MonoBehaviour
 			0f);
 	}
 
+    private void ManageMovement()
+    {
+		//Calculate the distance traveled in each frame with the formula d = v * t
+		_distance += _gravityVector * Time.deltaTime;
+
+		//Add the distance traveled to the position
+		transform.position += _distance * Time.deltaTime;
+	}
+
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Return))
@@ -44,11 +53,7 @@ public class Freefall : MonoBehaviour
         }
         else
         {
-			//Calculate the distance traveled in each frame with the formula d = v * t
-			_distance += _gravityVector * Time.deltaTime;
-
-			//Add the distance traveled to the position
-			transform.position += _distance * Time.deltaTime;
+            ManageMovement();
 		}
     }
 }

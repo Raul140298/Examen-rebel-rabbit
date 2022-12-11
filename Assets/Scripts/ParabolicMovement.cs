@@ -28,6 +28,17 @@ public class ParabolicMovement : MonoBehaviour
 		_gravityVector = Vector3.down * _gravity;
 	}
 
+	private void ManageMovement()
+	{
+		//Add both vectors
+		//velocityVector acts as the vector distance traveled each frame
+		//Calculate the distance traveled in each frame with the formula d = v * t
+		_velocityVector += _gravityVector * Time.deltaTime;
+
+		//Add the distance traveled to the position
+		transform.position += _velocityVector * Time.deltaTime;
+	}
+
 	void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.Return))
@@ -44,13 +55,7 @@ public class ParabolicMovement : MonoBehaviour
 		}
 		else
 		{
-			//Add both vectors
-			//velocityVector acts as the vector distance traveled each frame
-			//Calculate the distance traveled in each frame with the formula d = v * t
-			_velocityVector += _gravityVector * Time.deltaTime;
-
-			//Add the distance traveled to the position
-			transform.position += _velocityVector * Time.deltaTime;
+			ManageMovement();
 		}
 	}
 }
